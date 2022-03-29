@@ -1,0 +1,171 @@
+\section{Le théorème fondamental de l'arithmétique}
+
+Concernant les nombres premiers, les deux théorèmes à la fois les plus importants et les plus anciens, sont : \newline
+-Il y a une infinité de nombres premiers (Théorème \ref{thm:InfPre}). \newline
+-Le théorème fondamental de l'arithmétique.
+
+\begin{theorem}
+\textbf{Théorème fondamental de l'arithmétique} : \newline
+Tout entier $n > 0$ peut être écrit comme un produit de nombres premiers, de façon unique.
+\end{theorem}
+
+De ce théorème s'ensuivent un corollaire et une définition :
+
+\begin{corollary}
+\textbf{Nombres premiers} : \newline
+Un nombre est premier si et seulement si il est l'unique facteur de sa décomposition.
+\end{corollary}
+
+\begin{definition}
+\textbf{Nombres composés} : \newline
+Un entier $n > 0$ est dit composé si et seulement si il est le produit d'au moins $2$ nombres.
+\end{definition}
+
+Regardons quelques exemples pour bien comprendre comment marche une décomposition : 
+
+\begin{example}
+: \newline
+- $6 \ 936 = 2^{3} \times 3 \times 17^{2}$ \newline
+- $1 \ 200 = 2^{4} \times 3 \times 5^{2}$ \newline
+- $7 = 7$ \newline
+Les deux premiers nombres sont donc des nombres composés tandis que le dernier nombre est premier.
+\end{example}
+
+(La manière dont on trouve ces décompositions sera vue plus en profondeur dans les sections \ref{sec:algo_euclide} et \ref{sec:Algorithme})
+
+
+\subsection{démonstration}
+
+Pour démontrer le Théorème fondamental de l'arithmétique, il est nécessaire de le diviser en 2 parties. \newline
+En effet, le théorème affirme l'existence d'une décomposition ; et l'unicité de cette dernière. \newline
+Il nous faudra donc prouver son existence, et ensuite prouver que cette décomposition est unique. \newline
+(La démonstration est issue d'une vidéo youtube \ref{itm:FunAri})
+
+\subsubsection{Partie 1 : existence de la décomposition}
+
+\begin{proof}
+Nous ferons une démonstration par l'absurde : \newline
+Supposons qu'il existe au moins un entier naturel qui ne possède \textbf{pas} une telle décomposition.\newline
+On pose $m$, le plus petit de ces entiers. \newline
+On observe que $m$ est forcément composé (sinon il serait premier et, par définition, serait sa propre décomposition). \newline
+\newline
+On pose donc, \newline
+$$ m = ab \ \ \ \ \text{avec} \ 1 < a,b < m$$ 
+Vu que $a,b < m$, on peut écrire $a$ et $b$ dans leur décomposition (car on a posé m comme étant \textbf{le plus petit} entier qui ne peut pas s'écrire sous cette forme). \newline
+Donc :
+
+\begin{equation*} \label{equ:a}
+    a = p_1^{\alpha_1} \ldots p_n^{\alpha_n} \ \ \ \ p_i \ premiers \ / \ \alpha_i \in \ens{N} \ \ (1 \leq i \leq n)
+\end{equation*}
+\begin{equation*} \label{equ:b}
+    b = q_1^{\beta_1} \ldots q_m^{\beta_m} \ \ \ \ q_i \ premiers \ / \ \beta_i \in \ens{N} \ \ (1 \leq i \leq m)
+\end{equation*}
+\newline
+mais par définition de $m$, on a :
+\begin{align*}
+    m & = ab \\
+      & = p_1^{\alpha_1} \ldots p_n^{\alpha_n} \times q_1^{\beta_1} \ldots q_m^{\beta_m} \\
+\end{align*}
+$m$ possède donc une décomposition en facteurs premiers, ce qui contredit le prédicat. \newline
+Par conséquent, on conclut qu'il n'existe pas d'entier naturel $m$ qui ne possède pas de décomposition en facteurs premiers.
+\end{proof}
+
+\subsubsection{Partie 2 : unicité de la décomposition}
+
+Avant de s'attaquer à l'unicité, nous devons d'abord introduire le lemme d'Euclide :
+
+\begin{lemma}
+\textbf{Lemme d'Euclide} : \newline
+Soient $b,c \in \ens{N}$. \newline
+Si un nombre premier $p$ divise le produit $b \times c$, alors $p$ divise $b$ \textbf{ou} $p$ divise $c$.
+\end{lemma}
+
+\begin{proof}
+Voir la référence \ref{itm:LemEuc}.
+\end{proof}
+
+Maintenant que cela a été posé, commençons la démonstration de l'unicité de la décomposition en facteurs premiers :
+
+\begin{proof}
+Nous ferons aussi une démonstration par l'absurde : \newline
+Supposons que $2$ décompositions différentes sont égales :
+\begin{equation*}
+    p_1^{\alpha_1} \ldots p_n^{\alpha_n} = q_1^{\beta_1} \ldots q_m^{\beta_m}
+\end{equation*}
+Nous avons 3 objectifs : \newline
+1) Montrer que $n=m$. \newline
+2) Montrer que $p_i=q_i \ \ (\forall i, \ 1 \leq i \leq n,m)$. \newline
+3) Montrer que $\alpha_i=\beta_i \ \ (\forall i, \ 1 \leq i \leq n,m)$. \newline
+\newline
+Premièrement, on sait que :
+$$p_i \ \text{divise} \ p_1^{\alpha_1} \ldots p_n^{\alpha_n} \ \ (\forall i, \ 1 \leq i \leq n)$$
+mais par conséquent,
+$$p_i \ \text{divise aussi} \ q_1^{\beta_1} \ldots q_m^{\beta_m} \ \ (\forall i, \ 1 \leq i \leq n)$$ 
+(vu qu'ils sont censés être égaux) \newline
+
+Mais si on applique plusieurs fois le lemme d'Euclide, on déduit que :
+\begin{align*}
+    & p_i \ \text{divise} \ q_r^{\beta_r} \ (\text{pour un certain} \ 1 \leq r \leq m) \\
+    \implies & p_i \ \text{divise} \ q_r \\
+\end{align*}
+(Note : Si ces deux assertions ne vous paraissent pas évidentes, il faut comprendre que le lemme d'Euclide s'étend à autant de facteurs que vous le voulez. Vu que $p_i$ divise la décomposition de facteurs premiers, alors on sait que $p_i$ divise \textbf{au moins un} des facteurs, d'où la précision de "un \textbf{certain} $r$". \newline
+Et vu que $p_i$ divise un nombre mis à une puissance, ce nombre n'a comme facteurs que lui même, d'où l'implication que $p_i$ divise $q_r$) \newline
+\newline
+Maintenant on sait que que $p_i$ divise $q_r$, mais on rappelle que $p$ et $q$ sont des nombres \textbf{premiers}.\newline
+Par conséquent, ils ne possèdent aucun diviseur autre que 1 et eux-même, et vu que $p,q \not= 1$ (car $1$ n'est pas considéré comme premier), on conclut que :
+$$p_i=q_r$$
+Mais si l'on répète ce processus pour chaque facteur des deux côtés de l'égalité, alors on observe qu'à chaque facteur $p_i$ on peut associer un facteur $q_r$, et inversement. \newline
+Par conséquent, on conclut que :
+$$n=m$$
+et que les deux décompositions possèdent les mêmes nombres premiers en facteurs. \newline
+\newline
+Maintenant que nous avons prouvé que les deux décompositions ont le même nombre de facteurs, et que ces facteurs sont égaux entre eux, il suffit de prouver que ces facteurs sont bien élevés aux mêmes puissances. \newline
+Après avoir réarrangé les termes, on a :
+\begin{equation} \label{equ:Facteurs}
+    p_1^{\alpha_1} \ldots p_n^{\alpha_n} = p_1^{\beta_1} \ldots p_n^{\beta_n}
+\end{equation}
+On cherche donc à montrer que :
+$$\alpha_i = \beta_i \ \ (\forall i, \ 1 \leq i \leq n)$$
+\newline
+Nous allons démontrer cela par l'absurde : \newline
+Assumons que $\alpha_i > \beta_i$ \newline
+Divisons les deux côtés de l'égalité (\ref{equ:Facteurs}) par $p_i^{\beta_i}$. On obtient donc l'égalité suivante :
+\begin{equation} \label{equ:Division}
+    p_1^{\alpha_1} \ldots p_i^{\alpha_i-\beta_i} \ldots p_n^{\alpha_n} = p_1^{\beta_1} \ldots p_{i-1}^{\beta_{i-1}} p_{i+1}^{\beta_{i+1}} p_n^{\beta_n}
+\end{equation}
+(Note : si vous n'avez pas bien compris, vu que $\alpha_i > \beta_i$, alors du côté gauche le facteur $p_i$ existe toujours, il a juste perdu en puissance, alors qu'à droite il a tout simplement disparu, emporté par la division.) \newline
+\newline
+Avec l'égalité (\ref{equ:Division}), on en déduit :
+\begin{align*}
+    & p_i \ \text{divise} \ p_1^{\alpha_1} \ldots p_i^{\alpha_i-\beta_i} \ldots p_n^{\alpha_n} \\
+    \implies & p_i \ \text{divise} \ p_1^{\beta_1} \ldots p_{i-1}^{\beta_{i-1}} p_{i+1}^{\beta_{i+1}} p_n^{\beta_n} \\
+    \implies & p_i \ \text{divise} \ p_j \ \ \ \text{avec} \ i \not= j 
+    \ \ \ \text{\scriptsize{(D'après le lemme d'Euclide)}} \\
+\end{align*}
+Mais nous sommes face à une contradiction ! \newline
+En effet, $p_i$ \textbf{ne peut pas} diviser $p_j$, car ces deux nombres ont été définis comme premiers. \newline
+On en conclut donc que, $$\alpha_i \not> \beta_i$$ et avec la logique inverse on pourrait aussi prouver que, $$\alpha_i \not< \beta_i$$
+\newline
+Conclusion : $$\alpha_i = \beta_i \ \ (\forall i, \ 1 \leq i \leq n)$$
+\newline
+\newline
+Nous avons démontré que si deux décompositions sont égales, alors cela implique qu'elles aient le même nombre de facteurs, que ces facteurs soient égaux entre eux, et que ces mêmes facteurs soient élevés à une même puissance. De cela nous pouvons enfin conclure que :
+\begin{center}
+    \textbf{La décomposition d'un nombre en facteurs premiers est unique.}
+\end{center}
+
+\end{proof}
+
+
+\subsection{Forme générale d'une décomposition}
+\label{sec:Decompo}
+
+Maintenant que nous avons fini la démonstration, nous pouvons enfin énoncer le théorème :
+
+\begin{theorem}
+\textbf{Théorème fondamental de l'arithmétique} : \newline
+$\forall n \in \ens{N} \backslash \{0,1\}$, $\exists! k \in \ens{N}^{*}$ avec $p_1 \ldots p_k$ des nombres premiers et \newline $\alpha_1, \ldots ,\alpha_k \in \ens{N}^{*}$ tel que :
+$$n = p_1^{\alpha_1} \ldots p_k^{\alpha_k}$$
+\end{theorem}
+
+(Nous verrons des applications de ce théorème dans les sections \ref{part:pgcd_decompo} et \ref{part:ppcm_decompo})

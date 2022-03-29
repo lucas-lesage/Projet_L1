@@ -1,0 +1,172 @@
+Dans cette partie, nous allons chercher à écrire un algorithme qui donne la décomposition en facteurs premiers d'un nombre.
+On en a déjà donné un avec l'algorithme d'Euclide, dans la partie \ref{sec:algo_euclide}. Toutefois, nous allons ici travailler avec plusieurs fonctions indépendantes et intermédiaires, pour élargir l'angle de compréhension des outils que nous avons vus dans les parties précédentes.\\
+\\
+    Pour qu'il soit aisément réutilisable, cet algorithme sera écrit comme
+un programme en langage python.
+
+\subsection{Identification d'un nombre premier}
+\subsubsection{Principe de l'algorithme}
+
+Pour décomposer un nombre en facteurs premiers, il est nécessaire que notre programme puisse identifier un nombre comme étant premier.
+Grâce à la définition \ref{def:nb_prem},
+nous pouvons déterminer deux caractéristiques des nombres premiers qui nous aideront dans la rédaction de notre programme :
+\begin{enumerate}
+    \item Ils sont strictement supérieurs à 1.
+    \item Ils n'ont aucun diviseur strictement supérieur à 1.
+\end{enumerate}
+
+Il est aussi important de noter que tester tous les entiers sur $]1 , \sqrt{n}]$, est suffisant pour vérifier si $n$ est premier.
+
+Démontrons-le par l'absurde :
+
+\begin{proof}
+\label{prf:inf_racine_suffit}
+$
+\text{Soit r la racine carrée d'un entier n.}\\
+\text{Soit a un diviseur de n. Par définition,} \ \exists \ b \in \ \ens{Z} \ \text{tel que} \ ab \ = \ n\\
+\text{Supposons} \ a > r \ \text{et} \ b > r\\
+\text{Alors} \ ab > r^2 \iff ab > n
+$
+\end{proof}
+La proposition est absurde.
+Par conséquent, à tout divseur a de n supérieur à la racine carrée de n est associé un diviseur b de n, inférieur ou égal à la racine carrée de n.
+
+\subsubsection{Programmation en python}
+
+En considérant ce qui a été vu plus haut, on peut écrire le programme suivant, qui détermine si un nombre n est premier :
+
+\begin{verbatim}
+def tester_nombre_premier(n) :
+    if n <= 1 :
+        est_premier = False
+    else :
+        est_premier = True
+        for i in range (floor(sqrt(n)), 1, -1) :
+            if n%i == 0 :
+                est_premier = False
+    return est_premier
+\end{verbatim}
+
+\subsection{Création d'une liste de nombres premiers potentiels diviseurs}
+
+Pour trouver la décomposition en facteurs premiers d'un nombre n, nous allons déterminer la liste exhaustive des nombres premiers qui peuvent potentiellement être des diviseurs de n. 
+
+Pour cela, nous allons récupérer tous les nombres premiers entre 1 et n.
+
+Le programme en python est celui-ci :
+
+\begin{verbatim}
+def creer_liste_premiers(n) :
+    liste_premiers = []
+    for i in range (n, 1, -1) :
+        if tester_nombre_premier(i) :
+            liste_premiers.append(i)
+    return liste_premiers
+\end{verbatim}
+
+\textit{\emph{Note :} l'intérêt de passer par une telle fonction intermédiaire n'est pas évident. Le but de cette fonction, qui n'a pas été poussé ici, est de faciliter la récupération de listes complètes de nombres premiers, qui peuvent ensuite être aisément stockées sur des fichiers annexes. Ainsi, il serait facile d'optimiser grandement les calculs, en récupérant les listes déjà stockées. On n'aurait alors plus besoin de calculer de nouveaux nombres premiers que pour tester des nombres strictement supérieurs à tous ceux testés avant.}
+
+\subsection{Création d'une liste contenant la décomposition en facteurs premiers}
+
+Avec la liste des nombres premiers potentiellement diviseurs, il devient facile de récupérer la décomposition en facteurs premiers d'un nombre.
+
+Il suffit d'essayer de diviser le nombre par chaque terme de la liste autant que possible, jusqu'à ce que le nombre vaille 1. Par définition, le nombre ne sera alors plus divisible.
+
+Le programme python suivant permet donc de récupérer la décomposition en facteurs premiers d'un nombre n :
+
+
+\begin{verbatim}
+def decompo_premiers(n) :
+    nombre_compose = n
+    liste_premiers = creer_liste_premiers(n)
+    liste_decomposition = []
+    for i in liste_premiers :
+        while nombre_compose%i == 0 :
+            liste_decomposition.append(i)
+            nombre_compose = nombre_compose/i
+    return liste_decomposition
+\end{verbatim}
+
+\subsection{Programme de calcul du PGCD}
+
+En utilisant ce que nous avons vu dans la partie \ref{part:pgcd_decompo}, et le programme ci-dessus, il devient possible d'écrire un programme calculant le PGCD de deux nombres.
+
+Pour le comprendre, il est important de se souvenir que le programme que nous avons écrit nous donne la décomposition en facteurs premiers d'un nombre sous la forme d'une liste. Ainsi, contrairement à la forme générale qui utilise une notation avec des exposants, la liste contiendra un facteur autant de fois qu'il interviendra dans la décomposition.
+
+\begin{example}
+Le nombre 108, dans la forme générale de sa décomposition en facteurs premiers, s'écrit {$2^2 \times 3^3$}.
+La fonction que l'on a écrite, elle, nous renverra la liste \texttt{[2, 2, 3, 3, 3]}
+\end{example}
+
+On peut donc tester un à un les facteurs de la décomposition d'un des deux nombres, et les multiplier au PGCD si et seulement si ce facteur se trouve également dans la décomposition de l'autre nombre.
+
+Notons que :
+
+\begin{itemize}
+    \item On supprime les facteurs de la liste du second nombre au fur et à mesure.
+    \item Ainsi, le facteur est toujours compté le nombre minimum de fois :
+    \begin{itemize}
+        \item S'il apparaît moins de fois dans la décomposition a, alors on arrêtera de le compter dès que la boucle aura parcouru toutes ses apparitions dans ladite décomposition.
+        \item S'il apparaît moins de fois dans la décomposition b, alors il sera enlevé autant de fois de la liste b, et la condition cessant alors d'être respectée, le facteur ne sera plus pris en compte aux prochains passages de la boucle.
+    \end{itemize}
+    \item Pour simplifier les choses, le programme ici ne fonctionne qu'avec deux nombres strictement positifs. Autrement, la fonction retourne \texttt{None}.
+\end{itemize}
+
+\begin{verbatim}
+def calcul_pgcd(a, b) :
+    decompo_a = decompo_premiers(a)
+    decompo_b = decompo_premiers(b)
+    pgcd = None
+    for i in decompo_a :
+        if i in decompo_b :
+            if pgcd is None :
+                pgcd = 1
+            pgcd *= i
+            decompo_b.remove(i)
+    return pgcd
+\end{verbatim}
+
+\subsection{Programme de calcul du PPCM}
+
+\subsubsection{Programme indépendant}
+
+À partir de ce que nous avons vu dans la partie \ref{part:ppcm_decompo}, il est possible d'écrire un programme calculant le ppcm de deux nombres, avec un fonctionnement assez similaire au programme de calcul du PGCD que nous avons vu.
+
+Seulement, pour le calcul du ppcm, on cherche à compter chaque facteur le nombre \textbf{maximal} de fois où il intervient.
+
+On décompose donc le programme en deux étapes :
+
+\begin{enumerate}
+    \item On compte chaque facteur de la première décomposition autant de fois qu'il apparaît, en le supprimant (quand il y est) de la liste de la seconde décomposition.
+    \item S'il reste des facteurs dans la liste de la seconde décomposition, on les multiplie au PPCM.
+\end{enumerate}
+Ainsi, on est sûr d'avoir bien pris en compte chaque terme le plus grand nombre de fois.
+
+Voici donc le programme qui, comme celui du PGCD que nous avons vu, ne fonctionne que pour a et b strictement positifs.
+
+\begin{verbatim}
+def calcul_ppcm(a, b) :
+    decompo_a = decompo_premiers(a)
+    decompo_b = decompo_premiers(b)
+    ppcm = None
+    for i in decompo_a :
+        if ppcm is None :
+            ppcm = 1
+        ppcm *= i
+        if i in decompo_b :
+            decompo_b.remove(i)
+    for j in decompo_b :
+        if not (ppcm is None) :
+            ppcm *= j
+    return ppcm
+\end{verbatim}
+
+\subsubsection{Programme utilisant celui calculant le PGCD}
+
+Comme nous l'avons vu avec le théorème \ref{thm:rap_pgcd_ppcm}, il est possible de calculer le PPCM à partir du PGCD. 
+En utilisant le programme qui calcule le PGCD, il suffit en fait d'exploiter cette formule, pour créer un programme calculant facilement le PPCM de deux nombres a et b strictement positifs :
+
+\begin{verbatim}
+def calcul_simple_ppcm(a, b) :
+    return (a*b)/calcul_pgcd(a, b)
+\end{verbatim}

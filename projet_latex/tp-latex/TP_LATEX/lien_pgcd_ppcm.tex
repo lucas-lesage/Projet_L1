@@ -1,0 +1,38 @@
+Une formule simple relie le PPCM et le PGCD de deux nombres :
+
+\begin{theorem}
+\label{thm:rap_pgcd_ppcm}
+\begin{align*}
+& PGCD(a, b) \times PPCM(a, b) = |ab| \\
+& \iff PGCD(a, b) = \frac{|ab|}{PPCM(a, b)} \\
+& \iff PPCM(a, b) = \frac{|ab|}{PGCD(a, b)}
+\end{align*}
+\end{theorem}
+
+Ce théorème, assez impressionant, peut en fait se comprendre assez facilement. C'est pourquoi nous allons l'illustrer avec un exemple.
+
+\begin{example}
+Une fois n'est pas coutume, posons $a = 792$ et $b = 2970$.\\
+Regardons maintenant le tableau suivant, comparant l'exposition de chaque facteur dans les décompositions en facteurs premiers de a, b, $a \wedge b$, $a \vee b$, $a \times b$ et $(a \wedge b) \times (a \vee b)$ :\\
+
+\begin{tabular}{|c||l|l||l|l||r|r|}
+     \hline
+     Facteur & a & b & pgcd & ppcm & a $\times$ b & pgcd $\times$ ppcm \\
+     \hline
+     \hline
+     \textbf{2} & 3 & 1 & 1 & 3 & \red{4} & \red{4} \\
+     \hline
+     \textbf{3} & 2 & 3 & 2 & 3 & \red{5} & \red{5} \\
+     \hline
+     \textbf{5} & 0 & 1 & 0 & 1 & \red{1} & \red{1} \\
+     \hline
+     \textbf{11} & 1 & 1 & 1 & 1 & \red{2} & \red{2} \\
+     \hline
+\end{tabular}
+\end{example}
+
+En fait, on peut se représenter les choses en se disant que pour chaque facteur, le plus petit exposant entre a et b devient l'exposant du PGCD, et le plus grand devient celui du PPCM.
+
+En rappelant que $n^a \times n^b = n^{(a+b)}$, on arrive très facilement à la proriété vue ci-dessus.
+
+Toutefois, une démonstration complète peut être trouvée ici : \ref{itm:ppcm_aide_pgcd}

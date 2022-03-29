@@ -1,0 +1,55 @@
+\subsubsection{Calculer le PGCD à partir de la décomposition en facteurs premiers}
+\label{part:pgcd_decompo}
+
+Avoir la décomposition en facteurs premiers de deux nombres a et b permet de calculer très facilement leur PGCD $a \wedge b$.
+
+Il suffit d'étudier chaque facteur commun aux décompositions de a et b, et de le prendre au plus petit exposant. En multipliant tous les facteurs retenus, nous obtenons le PGCD de a et b.
+
+Prenons un exemple :
+
+\begin{example}
+
+Posons $a = 792 \ et \ b = 2970$. On a :\\
+$a = 2^3 \times 3^2 \times 11$\\
+$b = 2 \times 3^3 \times 5 \times 11$\\
+Il devient très facile de calculer $a \wedge b = 2 \times 3^2 \times 11 = 198$.
+
+\end{example}
+
+Pour effectuer ce calcul, le raisonnement fut le suivant :
+
+\begin{itemize}
+    \item 2 est un factuer commun aux décompositions de a et b. Dans la décomposition de a, il est à l'exposant 3, tandis qu'il est exposant 1 dans la décomposition de b. Nous prenons le plus petit exposant, on garde donc $2^1 = 2$.
+    \item 3 est également un facteur commun aux deux décomositions. Il est au plus petit exposant dans celle de a, on retient donc $3^2$.
+    \item 5 n'est pas présent dans la décomposition de a, on ne le garde donc pas.
+    \item 11 est un facteur commun aux deux décomposition. Il est en outre à l'exposant 1 dans les deux cas. On garde donc $11^1 = 11$.
+\end{itemize}
+
+D'où, en faisant le produit, $a \wedge b = 2 \times 3^2 \times 11$.\\
+\\
+
+\begin{proof}
+Le fonctionnement de cette méthode est assez intuitif, quand on comprend le sens de la décomposition en facteurs premiers. Une façon de le démontrer serait d'appeler m le nombre que nous trouvons avec cette technique, et d'ensuite étudier a et b divisés par m.
+
+On remarquerait alors que a/m et b/m n'ont pas de diviseur commun autre que 1.
+D'après la propriété \ref{prop:homopgcd} :
+
+$a \wedge b = (m \frac{a}{m}) \wedge (m \frac{b}{m}) = |m|(\frac{a}{m} \wedge \frac{b}{m}) = m \times 1 = m$
+\end{proof}
+
+\subsubsection{Calculer le PPCM à partir de la décomposition en facteurs premiers}
+\label{part:ppcm_decompo}
+
+La décomposition en facteurs premiers permet aussi, via une méthode à peu près similaire à celle vue ci-dessus, de calculer le PPCM de deux nombres.
+
+La différence avec la méthode de calcul du PGCD est que, pour chaque facteur présent dans la décomposition en facteurs premiers de a \textbf{OU} b, on garde l'exposant le plus \textbf{grand}.
+
+Reprenons l'exemple ci-dessus :
+
+\begin{example}
+Prenons encore :\\
+$a = 792 = 2^3 \times 3^2 \times 11$ et \\
+$b = 2970 = 2 \times 3^3 \times 5 \times 11$\\
+On calcule alors :
+$a \vee b = 2^3 \times 3^3 \times 5 \times 11 = 11 \ 880$.
+\end{example}

@@ -1,0 +1,25 @@
+Le \red{PPCM} signifie \red{P}lus \red{P}etit \red{C}ommun \red{M}ultiple.
+
+\begin{definition}
+Soient a et b deux entiers. Les assertions suivantes sont équivalentes :
+\begin{itemize}
+    \item a est un multiple de b
+    \item b est un diviseur de a
+    \item b|a
+    \item $\exists k \in \ens{Z} \ \text{tel que} \ bk = a$
+\end{itemize}
+\end{definition}
+Le PPCM de deux entiers a et b, noté $a \vee b$, est donc le plus petit entier naturel qui soit à la fois un multiple de a et de b.
+
+\begin{example}
+$3 \vee 5 = 15$ ; $2 \vee 6 = 6$
+\end{example}
+
+Bien que moins étudié que le PGCD, le PPCM possède néanmoins lui aussi quelques propriétés intéressantes.
+
+La plus notable est la suivante :
+
+\begin{theorem}
+Soient $m = a \vee b$, et q un entier. On a alors :\\
+$(a|q)$ et $(b|q) \iff (m|q)$
+\end{theorem}

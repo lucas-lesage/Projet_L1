@@ -1,0 +1,135 @@
+\documentclass[12pt]{article}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{mathtools, amssymb, amsthm, amsmath, amsfonts}
+\usepackage{graphicx, hyperref, xcolor, soulutf8, enumitem}
+\usepackage{fancyhdr, lastpage, lipsum, xspace}
+
+\title{\Huge{TP LATEX}}
+\author{\Large{Naïm ZAIRI, Lucas LESAGE et Maurin GILLES}}
+\date{\Large{Janvier 2022}}
+
+\hypersetup{colorlinks = true, linkcolor=black, urlcolor = blue}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-0.5pt}
+
+\newtheorem{theorem}{Théorème}[subsubsection]
+\newtheorem{definition}{Définition}[subsubsection]
+\newtheorem{corollary}{Corollaire}[subsubsection]
+\newtheorem{lemma}{Lemme}[subsubsection]
+\newtheorem{example}{Exemple}[subsubsection]
+\newtheorem{history}{Histoire}[subsubsection]
+\newtheorem{property}{Propriétés}[subsubsection]
+\newcommand{\ens}[1]{\mathbb{#1}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\pagestyle{fancy}
+\lhead{Naïm ZAIRI, Lucas LESAGE et Maurin GILLES}
+\rhead{Janvier 2022}
+\cfoot{Page \thepage \ sur \pageref{LastPage}}
+
+\frenchbsetup{StandardLists=true}
+
+
+
+%%%%%%%%%%%%%%%% PRELIMINAIRES %%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+
+\maketitle 
+
+\tableofcontents
+
+
+
+%%%%%%%%%%%%%%%% FIN INTRODUCTION %%%%%%%%%%%%%%%%
+
+
+
+\newpage
+\include{partie_1_arithmetique}
+
+
+
+%%%%%%%%%%%%%%%% FIN PARTIE 1 %%%%%%%%%%%%%%%%
+
+
+
+\newpage
+\include{partie_2_nombres_premiers}
+
+
+
+%%%%%%%%%%%%%%%% FIN PARTIE 2 %%%%%%%%%%%%%%%%
+
+
+
+\newpage
+\part*{références}
+\addcontentsline{toc}{part}{\protect\numberline{}références}%
+
+Note : les références sont cliquable.
+
+\begin{enumerate}[label=\text{[}\arabic*\text{]}]
+
+\item \href{https://fr.wikipedia.org/wiki/Entier_naturel}{Wikipédia, entier naturel.} \label{itm:entnat}
+
+\item \href{https://fr.wikipedia.org/wiki/Groupe_(mathématiques)}{Wikipédia, Groupes.} \label{itm:Groupe}
+
+\item \href{https://www.techno-science.net/definition/6433.html}{Techno-Science.net, Bijection - Définition et Explications.} \label{itm:Bijec}
+
+\item \href{https://fr.wikipedia.org/wiki/Argument_de_la_diagonale_de_Cantor}{Wikipédia, Argument de la diagonale de Cantor.} \label{itm;DiaCan}
+
+\item \href{https://fr.wikipedia.org/wiki/Hypothèse_du_continu}{Wikipédia, Hypothèse du continu.} \label{itm:HyDuCo}
+
+\item \href{https://fr.wikipedia.org/wiki/Euclide}{Wikipédia, Euclide.} \label{itm:Euclide}
+
+\item \href{https://membres-ljk.imag.fr/Bernard.Ycart/mel/ar/node4.html}{UJF Grenoble, démonstration de la division euclidienne.} \label{itm:DivEuc}
+
+\item \href{https://fr.wikipedia.org/wiki/Arithmétique_modulaire}{Wikipédia, arithmétique modulaire.} \label{itm:AriMod}
+
+\item \href{https://fr.wikipedia.org/wiki/Théorie_algébrique_des_nombres}{Wikipédia, théorie algébrique des nombres.} \label{itm:AriAlg}
+
+\item \href{https://fr.wikipedia.org/wiki/Arithmétique_des_polynômes}{Wikipédia, arithmétique des polynômes.} \label{itm:AriPol}
+
+\item \href{https://fr.wikipedia.org/wiki/Crise_des_fondements}{Wikipédia, Crise des fondements.} \label{itm:CriFon}
+
+\item \href{https://fr.wikipedia.org/wiki/Giuseppe_Peano}{Wikipédia, Giuseppe Peano.} \label{itm:Peano}
+
+\item \href{https://fr.wikipedia.org/wiki/Axiome}{Wikipédia, Axiome.} \label{itm:Axiome}
+
+\item \href{https://fr.wikipedia.org/wiki/Système_axiomatique}{Wikipédia, système axiomatique.} \label{itm:SysAxi}
+
+\item \href{https://fr.wikipedia.org/wiki/Théorie_des_ensembles_de_Zermelo-Fraenkel}{Wikipédia, Théorie des ensembles de Zermelo-Fraenkel.} \label{itm:ThrZFC}
+
+\item \href{https://fr.wikipedia.org/wiki/Calcul_des_prédicats}{Wikipédia, Calcul des prédicats.} \label{itm:CalPre}
+
+\item \href{https://www.futura-sciences.com/sciences/definitions/mathematiques-theoreme-incompletude-godel-13701/}{Futura sciences, Théorèmes d'incomplétude de Gödel.} \label{itm:ThmGdl}
+
+\item \href{https://webusers.imj-prg.fr/~alberto.minguez/Enseignement/Arithmetique_files/Cours-lm220-Kraus.pdf}{Alain Kraus, cours arithmétique page 9, théoreme 1.2} \label{itm:divprem} 
+
+\item \href{https://www.maths-et-tiques.fr/index.php/histoire-des-maths/nombres/les-nombres-premiers}{M@ths et tiques, histoire des nombres premiers.} \label{histoire}
+
+\item \href{https://www.youtube.com/watch?v=VkhJp2Ue_r0&t=114s}{Michael Penn, Number Theory | Fundamental Theorem of Arithmetic} \label{itm:FunAri}
+
+\item \href{https://www.imo.universite-paris-saclay.fr/~perrin/CAPES/arithmetique/lemmeEuclide.pdf}{PDF, Le lemme d'Euclide} \label{itm:LemEuc}
+
+\item \href{https://fr.wikipedia.org/wiki/Théorème_de_Bachet-Bézout}{Wikipédia, Théorème de Bachet-Bézout.} \label{itm:ThmBaBe}
+
+\item \href{https://fr.wikipedia.org/wiki/Plus_petit_commun_multiple#\%C3\%80_l'aide_du_PGCD}{Wikipédia, Calcul du PPCM à l'aide du PGCD} \label{itm:ppcm_aide_pgcd}
+
+\item \href{https://livre.fnac.com/a15900019/Mustapha-Boukhobza-Tout-ce-qu-il-faut-savoir-sur-les-mathematiques-en-MPSI-et-MP2I}{Livre, "Tout ce qu'il faut savoir sur les mathématiques", Jacques Delfaud, MPSI-MP2I}
+
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%% FIN REFERENCES %%%%%%%%%%%%%%%%
+
+
+\end{document}

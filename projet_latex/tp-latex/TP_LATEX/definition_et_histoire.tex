@@ -1,0 +1,24 @@
+\begin{definition}
+\label{def:nb_prem}
+Un entier n supérieur ou égal à deux est dit premier si et seulement si ses seuls diviseurs positifs sont 1 et lui-même.
+\end{definition}
+
+\begin{theorem} \label{thm:InfPre}
+Il y a une infinité de nombres premiers.
+\end{theorem}
+
+
+\begin{proof}
+Nous allons maintenant démontrer par l'absurde qu'il existe une infinité de nombres premiers. \\
+Supposons que P soit fini, de cardinal n. Soient $p_1,...,p_n$ ses éléments. \\
+Posons $N= 1 + p_1 ... p_n$. On a $N \geq 2$, donc N possède un diviseur premier p (d'apres \ref{itm:divprem}). \\
+L'entier p divise $p_1 ... p_n$, d'où l'on déduit que p divise 1. Cela conduit à une contradiction. P est donc infini.
+\end{proof}
+
+\begin{history} \ref{histoire}
+On peut retrouver des traces des nombres premier à 20 000 ans avant notre ère, sur l'os d'Ishango où figurent les nombres 11, 13, 17 et 19. \\
+Durant l'antiquité, Euclide met en place des théories et des affirmations dans les "Eléments", ainsi que la décomposition en facteurs premiers. Puis, ce sera Eratosthène de Cyrène qui donnera une méthode simple pour déterminer les nombres premiers. \\
+Par la suite, au Moyen-Age, ce sera Fibonnacci qui en fera une liste et en déterminera des critères de divisibilité. Ce sera un ecclésiastique français du nom de Marin Mersenne qui posa la question : si p est premier est-ce que $2^p - 1$ est premier ? Il a été montré que non, cependant la méthode est encore utilisée pour déterminer les nombres premiers dits "géants". \\
+Ce sera ensuite durant la Renaissance que Goldbach affirmera que tout nombre peut s'écrire sous forme d'une somme de deux nombres premiers. Euler quant à lui prouvera que $2^{31} - 1$ est premier. Gauss et Legendre vont par la suite s'intéresser à la repartition des nombres premier, montrant que plus les nombres sont dits "géants", moins les nombres premiers seront présents. \\
+Aujourd'hui, le plus grand nombre premier connu a été decouvert en 2018 et est : $2^{82 \ 589 \ 933} - 1$.
+\end{history}
