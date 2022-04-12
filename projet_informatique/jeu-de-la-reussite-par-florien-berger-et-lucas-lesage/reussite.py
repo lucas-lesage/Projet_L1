@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import *
 from tkinter import *
+from tkinter.ttk import *
 
 
 
@@ -41,7 +42,13 @@ def carte_to_chaine(carte, char_special=True):
     
     return cartes  
 
-
+def paquet_to_liste_dico(paquet):
+# change une liste au format['val-coul',...] au format [{'valeur':..., 'couleur':...},...]
+    liste_dico = []
+    for elem in paquet:
+        carte = chaine_to_dico(elem)
+        liste_dico.append(carte)
+    return(liste_dico)
 
 def afficher_reussite(liste_carte):
 #affiche une liste de cartes au format "valeur symbole"
@@ -96,17 +103,19 @@ def init_pioche_fichier(nom_fichier):
     return liste_dico
 
 def ecrire_fichier_reussite(nom_fichier_sauvegarde, pioche):
-#ecriture d'une sauvegarde d'un fichier
+###ecriture d'une sauvegarde d'un fichier
     sauvegarde = open(nom_fichier_sauvegarde, 'w')
-    for i in range(len(pioche)) :
+    for i in range(len(pioche)-1) :
         carte = carte_to_chaine(pioche[i], False)
         sauvegarde.write(carte + ' ')
+    carte = carte_to_chaine(pioche[len(pioche)-1], False)
+    sauvegarde.write(carte)
     sauvegarde.close()
     
 def init_pioche_alea(nb_carte=32):
     paquet = cree_paquet_cartes(nb_carte)
     random.shuffle(paquet)
-    return paquet
+    return paquet_to_liste_dico(paquet)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -120,11 +129,12 @@ def alliance(carte1, carte2):
 
 def saut_si_possible (liste_tas, num_tas):
 #vérifie si une alliance est possible à l'indice donné, et l'applique si oui
-    if num_tas>=1 and len(liste_tas)>2 and alliance(liste_tas[num_tas-1], liste_tas[num_tas+1]):
+    if (num_tas>=1 and num_tas<len(liste_tas)-1 and len(liste_tas)>2) and alliance(liste_tas[num_tas-1], liste_tas[num_tas+1]):
         liste_tas.pop(num_tas-1)
         return True
     else:
         return False
+
 
 
 
@@ -139,12 +149,14 @@ def une_etape_reussite(liste_tas, pioche, affiche=False):
         afficher_reussite(liste_tas)
     if reussite :
         i = 1
-        while len(pioche)>0 and i+1 < len(liste_tas):
+        while i+1 < len(liste_tas):
             reussite2 = saut_si_possible(liste_tas, i)
-            if reussite2 :
+            if affiche and reussite2:
+                    afficher_reussite(liste_tas)
+            while reussite2 :
                 i=1
                 reussite2 = saut_si_possible(liste_tas, i)
-                if affiche :
+                if reussite2 and affiche :
                     afficher_reussite(liste_tas)
             i += 1
             
@@ -156,25 +168,25 @@ def une_etape_reussite(liste_tas, pioche, affiche=False):
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-def paquet_to_liste_dico(paquet):
-# change une liste au format['val-coul',...] au format [{'valeur':..., 'couleur':...},...]
-    liste_dico = []
-    for elem in paquet:
-        carte = chaine_to_dico(elem)
-        liste_dico.append(carte)
-    return(liste_dico)
+
 
 def reussite_mode_auto(pioche, affiche=False):
 # prend une pioche en argument et joue une réussite des alliances avec ladite pioche
-    pioche_dico = paquet_to_liste_dico(pioche)
     liste = []
-    liste.append(pioche_dico[0])
-    pioche_dico.pop(0)
-    liste.append(pioche_dico[0])
-    pioche_dico.pop(0)
-    compteur = len(pioche_dico)
+    pioche2=list(pioche)
+    if affiche :
+        afficher_reussite(pioche2)
+    liste.append(pioche2[0])
+    pioche2.pop(0)
+    if affiche :
+        afficher_reussite(liste)
+    liste.append(pioche2[0])
+    pioche2.pop(0)
+    if affiche :
+        afficher_reussite(liste)    
+    compteur = len(pioche2)
     while compteur > 0:
-        une_etape_reussite(liste, pioche_dico, affiche)
+        une_etape_reussite(liste, pioche2, affiche)
         compteur = compteur - 1
     i = 1
     while i+1 < len(liste):
@@ -189,7 +201,7 @@ def reussite_mode_auto(pioche, affiche=False):
 
 def reussite_mode_manuel(pioche, nb_tas_max = 2):
 # prend une pioche en argument et laisse le joueur choisir s'il veut réaliser les sauts
-    pioche_dico = paquet_to_liste_dico(pioche)
+    pioche_dico = list(pioche)
     liste = []
     liste.append(pioche_dico[0])
     pioche_dico.pop(0)
@@ -242,40 +254,91 @@ def lance_reussite(mode, nb_carte=32, affiche=False, nb_tas_max=2):
             mode = intput("Quel mode: auto ou manuel")
             
 def menu_reussite():
-    rep_part = input("Voulez-Vous Faire une Partie? Oui/Non : ")
-    
-    if (rep_part == "Oui"):
-        nb_carte = int(input("Combien de cartes? 32/52 : "))
-        pioche = init_pioche_alea(nb_carte)
-        mode = input("Quel mode de jeu? auto/manuel/quitter/simulation: ")
-        
-        while (mode != "auto" and mode != "manuel" and mode != "quitter" and mode != "simulation"):
-            mode = input("Quel mode de jeu? auto/manuel/quitter: ")
-            
-        if (mode == "auto"):
-            affichage = input("Voulez-Vous afficher? Oui/Non: ")
-            reussite_mode_auto(pioche, affichage)
-        
-        elif (mode == "manuel"):
-            nb_tas_max = int(input("Combien de tas maximum: "))
-            reussite_mode_manuel(pioche, nb_tas_max)
-        
-        elif (mode == "simulation"):
+### Affiche un menu proposant plusieurs options : joueur une partie (auto, sauvegardée, manuelle...), effectuer des simulations, quitter le jeu.
+    choix = int(input("-------------MENU-------------\n| 1- Jouer une partie         |\n| 2- Effectuer une simulation |\n| 3- Quitter                  |\n------------------------------\n"))
+
+    while choix not in [1, 2, 3] :
+        choix = int(input("-------------MENU-------------\n| 1- Jouer une partie         |\n| 2- Effectuer une simulation |\n| 3- Quitter                  |\n------------------------------\n"))
+
+    while choix != 3 :
+
+        if choix == 1 :
+            mode = int(input("----MODE DE JEU----\n| 1- Automatique   |\n| 2- Manuel        |\n-------------------\n"))
+
+            while mode not in [1, 2] :
+                mode = int(input("----MODE DE JEU----\n| 1- Automatique   |\n| 2- Manuel        |\n-------------------\n"))
+
+            if mode == 1 :
+                jeu_fichier = input("Voulez vous jouer une partie enregistrée ? oui / non :")
+
+                if jeu_fichier.lower()== "oui" :
+                    # vérifie si le fichier que l'on veut charger existe, et demande de saisir un nom de fichier tant qu'on n'en trouve pas
+                    erreur = True
+                    while erreur : 
+                        nom_fichier = input("Fichier: ")
+                        try :
+                            with open(nom_fichier+".txt") as file :
+                                print("Chargement...")
+                                erreur = False
+                            pioche = init_pioche_fichier(nom_fichier+".txt")
+                        except FileNotFoundError:
+                            confirm = input("Fichier non trouvé. Saisissez 'q' pour abandonner, ou tout autre caractère pour saisir un nouveau nom : ")
+                            if confirm.lower() == 'q' :
+                                erreur = False
+                                jeu_fichier = "non"
+                        
+                    
+                                    
+                if jeu_fichier.lower() != "oui" :       
+                    nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
+                    while nb_carte not in [1, 2] :
+                        nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
+                    pioche = init_pioche_alea(nb_carte)
+                
+
+                afficher = input("Voulez vous afficher les étapes ? oui / non : ")
+                affichage = (afficher.lower() == "oui")
+                reussite_mode_auto(pioche, affichage)
+
+                if jeu_fichier.lower() != "oui" :
+                    enreg = input("Voulez vous sauvegarder cette pioche ? oui / non : ")
+                    if enreg.lower() == "oui" :
+                        erreur_sauv = True
+                        while erreur_sauv :
+                            nom_fichier_sauv = input("Nom de la sauvegarde : ")
+                            try :
+                                with open(nom_fichier_sauv + ".txt") as file :
+                                    confirm = input("Ce nom est déjà utilisé. Saisissez 'q' pour abandonner, ou tout autre caractère pour saisir un nouveau nom : ")
+                                    if confirm.lower() == 'q' :
+                                        erreur_sauv = False
+                            except FileNotFoundError :
+                                ecrire_fichier_reussite(nom_fichier_sauv + ".txt", pioche)
+                                erreur_sauv = False
+
+            if mode == 2 :
+                nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
+                while nb_carte not in [1, 2] :
+                    nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
+                pioche = init_pioche_alea(nb_carte)
+                nb_tas_max = int(input("Combien de tas maximum pour gagner ? (entre 2 et le nombre de cartes choisi)"))
+                reussite_mode_manuel(pioche, nb_tas_max)
+
+        elif choix == 2 :
             nb_sim = int(input("Combien de Simulation voulez effectuer?: "))
+            nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
+            while nb_carte not in [1, 2] :
+                nb_carte = int(input("Combien de cartes?\n 1- 32 cartes\n 2- 52 cartes\n"))
             simul = input("Quelle type de simulation Proba/Stats: ")
-            if (simul == "Proba"):
+            if (simul.lower() == "proba"):
                 graph_proba(nb_sim, nb_carte)
                 
             else:
-                graphique_stats(nb_sim)
-                
-        
-        else:
-            print("Au Revoir")
-    
-    else:
-        print("Au Revoir")
-            
+                graphique_stats(nb_sim, nb_carte)
+
+        choix = int(input("-------------MENU-------------\n| 1- Jouer une partie         |\n| 2- Effectuer une simulation |\n| 3- Quitter                  |\n------------------------------\n"))
+
+    print("Au revoir")
+
             
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -287,15 +350,18 @@ def menu_reussite():
 def verifier_pioche(pioche, nb_cartes=32): 
 #permet de verifier si un paquet est complet
 
-    paquet_32 = ['A-P', 'R-P', 'D-P', 'V-P', '10-P', '9-P', '8-P', '7-P', 'A-C', 'R-C', 'D-C', 'V-C', '10-C', '9-C', '8-C', '7-C', 'A-K', 'R-K', 'D-K', 'V-K', '10-K', '9-K', '8-K', '7-K', 'A-T', 'R-T', 'D-T', 'V-T', '10-T', '9-T', '8-T', '7-T']
-    paquet_52 = ['A-P', 'R-P', 'D-P', 'V-P', '10-P', '9-P', '8-P', '7-P', '6-P', '5-P', '4-P', '3-P', '2-P', 'A-C', 'R-C', 'D-C', 'V-C', '10-C', '9-C', '8-C', '7-C', '6-C', '5-C', '4-C', '3-C', '2-C', 'A-K', 'R-K', 'D-K', 'V-K', '10-K', '9-K', '8-K', '7-K', '6-K', '5-K', '4-K', '3-K', '2-K', 'A-T', 'R-T', 'D-T', 'V-T', '10-T', '9-T', '8-T', '7-T', '6-T', '5-T', '4-T', '3-T', '2-T']
+    paquet_32 = [{'valeur': 'A', 'couleur': 'P'}, {'valeur': 'R', 'couleur': 'P'}, {'valeur': 'D', 'couleur': 'P'}, {'valeur': 'V', 'couleur': 'P'}, {'valeur': 10, 'couleur': 'P'}, {'valeur': 9, 'couleur': 'P'}, {'valeur': 8, 'couleur': 'P'}, {'valeur': 7, 'couleur': 'P'}, {'valeur': 'A', 'couleur': 'C'}, {'valeur': 'R', 'couleur': 'C'}, {'valeur': 'D', 'couleur': 'C'}, {'valeur': 'V', 'couleur': 'C'}, {'valeur': 10, 'couleur': 'C'}, {'valeur': 9, 'couleur': 'C'}, {'valeur': 8, 'couleur': 'C'}, {'valeur': 7, 'couleur': 'C'}, {'valeur': 'A', 'couleur': 'K'}, {'valeur': 'R', 'couleur': 'K'}, {'valeur': 'D', 'couleur': 'K'}, {'valeur': 'V', 'couleur': 'K'}, {'valeur': 10, 'couleur': 'K'}, {'valeur': 9, 'couleur': 'K'}, {'valeur': 8, 'couleur': 'K'}, {'valeur': 7, 'couleur': 'K'}, {'valeur': 'A', 'couleur': 'T'}, {'valeur': 'R', 'couleur': 'T'}, {'valeur': 'D', 'couleur': 'T'}, {'valeur': 'V', 'couleur': 'T'}, {'valeur': 10, 'couleur': 'T'}, {'valeur': 9, 'couleur': 'T'}, {'valeur': 8, 'couleur': 'T'}, {'valeur': 7, 'couleur': 'T'}]
+    paquet_52 = [{'valeur': 'A', 'couleur': 'P'}, {'valeur': 'R', 'couleur': 'P'}, {'valeur': 'D', 'couleur': 'P'}, {'valeur': 'V', 'couleur': 'P'}, {'valeur': 10, 'couleur': 'P'}, {'valeur': 9, 'couleur': 'P'}, {'valeur': 8, 'couleur': 'P'}, {'valeur': 7, 'couleur': 'P'}, {'valeur': 6, 'couleur': 'P'}, {'valeur': 5, 'couleur': 'P'}, {'valeur': 4, 'couleur': 'P'}, {'valeur': 3, 'couleur': 'P'}, {'valeur': 2, 'couleur': 'P'}, {'valeur': 'A', 'couleur': 'C'}, {'valeur': 'R', 'couleur': 'C'}, {'valeur': 'D', 'couleur': 'C'}, {'valeur': 'V', 'couleur': 'C'}, {'valeur': 10, 'couleur': 'C'}, {'valeur': 9, 'couleur': 'C'}, {'valeur': 8, 'couleur': 'C'}, {'valeur': 7, 'couleur': 'C'}, {'valeur': 6, 'couleur': 'C'}, {'valeur': 5, 'couleur': 'C'}, {'valeur': 4, 'couleur': 'C'}, {'valeur': 3, 'couleur': 'C'}, {'valeur': 2, 'couleur': 'C'}, {'valeur': 'A', 'couleur': 'K'}, {'valeur': 'R', 'couleur': 'K'}, {'valeur': 'D', 'couleur': 'K'}, {'valeur': 'V', 'couleur': 'K'}, {'valeur': 10, 'couleur': 'K'}, {'valeur': 9, 'couleur': 'K'}, {'valeur': 8, 'couleur': 'K'}, {'valeur': 7, 'couleur': 'K'}, {'valeur': 6, 'couleur': 'K'}, {'valeur': 5, 'couleur': 'K'}, {'valeur': 4, 'couleur': 'K'}, {'valeur': 3, 'couleur': 'K'}, {'valeur': 2, 'couleur': 'K'}, {'valeur': 'A', 'couleur': 'T'}, {'valeur': 'R', 'couleur': 'T'}, {'valeur': 'D', 'couleur': 'T'}, {'valeur': 'V', 'couleur': 'T'}, {'valeur': 10, 'couleur': 'T'}, {'valeur': 9, 'couleur': 'T'}, {'valeur': 8, 'couleur': 'T'}, {'valeur': 7, 'couleur': 'T'}, {'valeur': 6, 'couleur': 'T'}, {'valeur': 5, 'couleur': 'T'}, {'valeur': 4, 'couleur': 'T'}, {'valeur': 3, 'couleur': 'T'}, {'valeur': 2, 'couleur': 'T'}]
     verif = 0
     
-    for i in range(0, nb_cartes):
-        if (nb_cartes == 32 and pioche[i] in paquet_32):
-            verif += 1
-        elif (nb_cartes == 52 and pioche[i] in paquet_52):
-            verif += 1
+    if len(pioche) == 32 :
+        for i in range(32):
+            if  paquet_32[i] in pioche:
+                verif += 1
+    elif len(pioche) == 52 :
+        for i in range(52):
+            if paquet_52[i] in pioche :
+                verif += 1
     
     return (nb_cartes == verif)
 
@@ -347,9 +413,9 @@ def moyenne_tas(nb_tas):
     moyenne = somme_tas // compteur
     return moyenne
     
-def graphique_stats(nb_sim): 
+def graphique_stats(nb_sim, nb_cartes=32): 
 # affichage par un graphique du nombre de tas pour chaques simulations
-    nb_tas = res_multi_simulation(nb_sim+1)
+    nb_tas = res_multi_simulation(nb_sim+1, nb_cartes)
     y2 = moyenne_tas(nb_tas)
     for i in range(0, len(nb_tas)):
         x = i
@@ -434,7 +500,273 @@ def graph_proba(nb_sim, nb_carte=32):
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+master = Tk() 
+  
+master.geometry("500x500")
+master['bg'] = '#00561b'
 
+def stats_32():
+    nb_sim = int(input("Combien de Simulations: "))
+    graphique_stats(nb_sim, 32)
+     
+    
+def probas_32():
+    nb_sim = int(input("Combien de Simulations: "))
+    graph_proba(nb_sim, 32)
+    
+    
+def stats_52():
+    nb_sim = int(input("Combien de Simulations: "))
+    graphique_stats(nb_sim, 52)
+ 
+    
+def probas_52():
+    nb_sim = int(input("Combien de Simulations: "))
+    graph_proba(nb_sim, 52)
+    
+
+def open_fenetre_simulation_32(fenetre=master): 
+      
+    
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+  
+    
+    Label(fenetre, text ="Quel type de simulation voulez-vous réaliser?").pack()
+    btn_stats =  Button(fenetre,  
+             text ="Lancer Simulations de Statistique",  
+             command = stats_32)
+    btn_probas =  Button(fenetre,  
+             text ="Lancer Simulations de Probalités",  
+             command = probas_32)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_stats.pack(pady = 10)
+    btn_probas.pack(pady = 15)
+    btn_quitter.pack(pady = 20)
+    
+def open_fenetre_simulation_52(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+    
+  
+    
+    Label(fenetre, text ="Quel type de simulation voulez-vous réaliser?").pack()
+    btn_stats =  Button(fenetre,  
+             text ="Lancer Simulations de Statistique",  
+             command = stats_52)
+    btn_probas =  Button(fenetre,  
+             text ="Lancer Simulations de Probalités",  
+             command = probas_52)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_stats.pack(pady = 10)
+    btn_probas.pack(pady = 15)
+    btn_quitter.pack(pady = 20)
+    
+ 
+
+def manuel_32():
+    pioche = init_pioche_alea(32)
+    nb_tas_max = int(input("Combien de Tas au Maximum: "))
+    reussite_mode_manuel(pioche, nb_tas_max)
+    
+
+def manuel_52():
+    pioche = init_pioche_alea(52)
+    nb_tas_max = int(input("Combien de Tas au Maximum: "))
+    reussite_mode_manuel(pioche, nb_tas_max)
+       
+
+def open_fenetre_manuel_32(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+  
+    
+    Label(fenetre, text ="Lancer le Mode Manuel").pack()
+    btn_lance =  Button(fenetre,  
+             text ="Lancer Partie",  
+             command = manuel_32)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_lance.pack(pady = 10)
+    btn_quitter.pack(pady = 15)
+    
+def open_fenetre_manuel_52(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+
+  
+    
+    Label(fenetre, text ="Lancer le Mode Manuel").pack()
+    btn_lance =  Button(fenetre,  
+             text ="Lancer Partie",  
+             command = manuel_52)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy)    
+    btn_lance.pack(pady = 10)
+    btn_quitter.pack(pady = 15)
+
+
+def auto_32(affiche):
+    pioche = init_pioche_alea(32)
+    reussite_mode_auto(pioche, affiche)
+
+    
+def auto_52(affiche):
+    pioche = init_pioche_alea(32)
+    reussite_mode_auto(pioche, affiche)
+
+
+def open_fenetre_auto_32(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+    
+
+  
+    
+    Label(fenetre, text ="Voulez-Vous Afficher le déroulement de la partie (la partie se lancera toute seule)?").pack()
+    
+    btn_oui =  Button(fenetre,  
+             text ="Oui",  
+             command = lambda: auto_32(True))
+    btn_non =  Button(fenetre,  
+             text ="Non",  
+             command = lambda : auto_32(False))
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_oui.pack(pady = 10) 
+    btn_non.pack(pady = 15)
+    btn_quitter.pack(pady = 20) 
+    
+def open_fenetre_auto_52(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+ 
+  
+    
+    Label(fenetre, text ="Voulez-Vous Afficher le déroulement de la partie?").pack()
+    
+    btn_oui =  Button(fenetre,  
+             text ="Oui",  
+             command = lambda: auto_52(True))
+    btn_non =  Button(fenetre,  
+             text ="Non",  
+             command = lambda : auto_52(False))
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_oui.pack(pady = 10) 
+    btn_non.pack(pady = 15)
+    btn_quitter.pack(pady = 20)
+    
+    
+  
+def open_fenetre_mode_jeu_32(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+     
+  
+    
+    Label(fenetre,  
+          text ="Veuillez Choisir Votre Mode de Jeu").pack()
+    
+    btn_auto =  Button(fenetre,  
+             text ="Automatique",  
+             command = open_fenetre_auto_32)
+    btn_manuel =  Button(fenetre,  
+             text ="Manuel",  
+             command = open_fenetre_manuel_32)
+    btn_sim =  Button(fenetre,  
+             text ="Simulation",  
+             command = open_fenetre_simulation_32)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_auto.pack(pady = 10) 
+    btn_manuel.pack(pady = 15) 
+    btn_sim.pack(pady = 20) 
+    btn_quitter.pack(pady = 25)
+    
+    
+def open_fenetre_mode_jeu_52(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+
+  
+    
+    Label(fenetre,  
+          text ="Veuillez Choisir Votre Mode de Jeu").pack()
+    
+    btn_auto =  Button(fenetre,  
+             text ="Automatique",  
+             command = open_fenetre_auto_52)
+    btn_manuel =  Button(fenetre,  
+             text ="Manuel",  
+             command = open_fenetre_manuel_52)
+    btn_sim =  Button(fenetre,  
+             text ="Simulation",  
+             command = open_fenetre_simulation_52)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_auto.pack(pady = 10) 
+    btn_manuel.pack(pady = 15) 
+    btn_sim.pack(pady = 20)
+    btn_quitter.pack(pady = 25)
+         
+    
+     
+def open_fenetre_cartes(fenetre=master): 
+      
+    for widget in fenetre.winfo_children():
+        widget.destroy()
+  
+    
+    Label(fenetre, text ="Avec Combien de Cartes voulez-vous jouer?").pack()
+    
+    btn_32 =  Button(fenetre,  
+             text ="32",  
+             command = open_fenetre_mode_jeu_32)
+    btn_52 =  Button(fenetre,  
+             text ="52",  
+             command = open_fenetre_mode_jeu_52)
+    btn_quitter = Button(fenetre,  
+             text ="Quitter",  
+             command = master.destroy) 
+    btn_32.pack(pady = 10) 
+    btn_52.pack(pady = 15) 
+    btn_quitter.pack(pady = 20)
+  
+"""""""fenetre de depart"""
+label = Label(master,  
+              text ="Voulez-Vous Jouez?") 
+  
+label.pack(pady = 10) 
+  
+btn_oui = Button(master,  
+             text ="Oui",  
+             command = open_fenetre_cartes)
+btn_non = Button(master,  
+             text ="Non",  
+             command = master.destroy) 
+btn_oui.pack(pady = 10) 
+btn_non.pack(pady = 15) 
+"""""""""fin de fenetre de départ"""
+
+mainloop()
     
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -445,7 +777,7 @@ def graph_proba(nb_sim, nb_carte=32):
 if __name__=="__main__":
 
     paquet = [{'valeur':7, 'couleur':'P'}, {'valeur':10, 'couleur':'K'}, {'valeur':'A', 'couleur':'T'}]
-    #afficher_reussite(paquet)
+    afficher_reussite(paquet)
     #paquet2 = init_pioche_alea()
     #print(paquet2)
     #paquet_32 = cree_paquet_cartes(32)
@@ -478,4 +810,4 @@ if __name__=="__main__":
     #graph_proba(3000, 32)
     #lance_reussite("manuel", nb_tas_max=10)
     #menu_reussite()
-    print(carte_to_chaine({'valeur':7, 'couleur':'P'}, False))
+
